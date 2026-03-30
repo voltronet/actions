@@ -2,7 +2,7 @@
 name: Test Vault Generic Flow
 on:
   push:
-    branches: [ "vault-login" ]
+    branches: [ "vault-login","main" ]
   workflow_dispatch: # Îl pornești tu manual din butonul de GitHub Actions
 
 jobs:

@@ -1,5 +1,5 @@
 # .github/workflows/vault-login.yml
-name: Test Vault Generic Flow
+name: Test Vault Generic Login
 on:
   workflow_dispatch: # Îl pornești tu manual din butonul de GitHub Actions
 
