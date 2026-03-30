@@ -1,5 +1,5 @@
 # .github/workflows/vault-login.yml
-name: Test Vault Generic Login
+name: Test Vault Generic Flow
 on:
   workflow_dispatch: # Îl pornești tu manual din butonul de GitHub Actions
 
@@ -11,7 +11,7 @@ jobs:
 
       - name: Run Global Vault Action
         # POINTA CĂTRE BRANCH: în loc de @main, pune numele branch-ului tău de devops
-        uses: ./actions/vault-login
+        uses: voltronet/actions/vault-login@main
         with:
           app_name: 'backend-service'
           environment: 'local' # Sau staging, pentru a testa logica de non-prod
