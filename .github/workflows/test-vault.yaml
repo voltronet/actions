@@ -13,7 +13,7 @@ jobs:
 
       - name: Run Global Vault Action
         # POINTA CĂTRE BRANCH: în loc de @main, pune numele branch-ului tău de devops
-        uses: drcarmen-org/drcarmen-devops/actions/vault-fetch@numele-branch-ului-tau
+        uses: voltronet/actions/vault-login@main
         with:
           app_name: 'backend-service'
           environment: 'local' # Sau staging, pentru a testa logica de non-prod

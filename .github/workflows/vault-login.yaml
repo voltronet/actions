@@ -1,32 +1,27 @@
-# drcarmen-devops/actions/vault-fetch/action.yml
-name: 'DrCarmen Vault Fetch'
-inputs:
-  app_name:
-    required: true
-  environment:
-    required: true
-  vault_token:
-    required: true
+# .github/workflows/vault-login.yml
+name: Test Vault Generic Flow
+on:
+  workflow_dispatch: # Îl pornești tu manual din butonul de GitHub Actions
 
-runs:
-  using: "composite"
-  steps:
-    - name: Set Vault Address
-      shell: bash
-      run: |
-        if [ "${{ inputs.environment }}" == "prod" ]; then
-          echo "VAULT_ACTIVE_ADDR=${{ vars.VAULT_ADDR_PROD }}" >> $GITHUB_ENV
-        else
-          # Folosim același nume de variabilă (VAULT_ACTIVE_ADDR) indiferent de mediu
-          echo "VAULT_ACTIVE_ADDR=${{ vars.VAULT_ADDR_DEV }}" >> $GITHUB_ENV
-        fi
+jobs:
+  test-vault:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Fetch Secrets from Vault
-      uses: hashicorp/vault-action@v2
-      with:
-        # Aici folosim variabila setată mai sus
-        url: ${{ env.VAULT_ACTIVE_ADDR }}
-        method: token
-        token: ${{ inputs.vault_token }}
-        secrets: |
-          local-infra/data/${{ inputs.app_name }}/${{ inputs.environment }} * | DRCARMEN_ ;
+      - name: Run Global Vault Action
+        # POINTA CĂTRE BRANCH: în loc de @main, pune numele branch-ului tău de devops
+        uses: voltronet/actions/vault-login@main
+        with:
+          app_name: 'backend-service'
+          environment: 'local' # Sau staging, pentru a testa logica de non-prod
+          vault_token: ${{ secrets.VAULT_TOKEN_DEV }}
+
+      - name: Verify Secrets (Safe Check)
+        run: |
+          if [ -z "$DRCARMEN_UNLEASH_AUTHORIZATION" ]; then
+            echo "❌ Secretul nu a fost preluat!"
+            exit 1
+          else
+            echo "✅ Succes! Variabilele sunt în pipeline."
+          fi
