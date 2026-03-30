@@ -1,0 +1,32 @@
+# drcarmen-devops/actions/vault-fetch/action.yml
+name: 'DrCarmen Vault Fetch'
+inputs:
+  app_name:
+    required: true
+  environment:
+    required: true
+  vault_token:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set Vault Address
+      shell: bash
+      run: |
+        if [ "${{ inputs.environment }}" == "prod" ]; then
+          echo "VAULT_ACTIVE_ADDR=${{ vars.VAULT_ADDR_PROD }}" >> $GITHUB_ENV
+        else
+          # Folosim același nume de variabilă (VAULT_ACTIVE_ADDR) indiferent de mediu
+          echo "VAULT_ACTIVE_ADDR=${{ vars.VAULT_ADDR_DEV }}" >> $GITHUB_ENV
+        fi
+
+    - name: Fetch Secrets from Vault
+      uses: hashicorp/vault-action@v2
+      with:
+        # Aici folosim variabila setată mai sus
+        url: ${{ env.VAULT_ACTIVE_ADDR }}
+        method: token
+        token: ${{ inputs.vault_token }}
+        secrets: |
+          local-infra/data/${{ inputs.app_name }}/${{ inputs.environment }} * | DRCARMEN_ ;
