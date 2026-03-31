@@ -30,4 +30,5 @@ runs:
         echo "Retrieving secrets for ${{ inputs.app_name }} in ${{ inputs.environment }}..."
         # For testing, set dummy values
         echo "DRCARMEN_UNLEASH_AUTHORIZATION=dummy_authorization_token" >> $GITHUB_ENV
+        echo $GITHUB_ENV
         echo "Secrets loaded successfully."
