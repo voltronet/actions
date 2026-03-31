@@ -6,22 +6,16 @@ on:
   workflow_dispatch: # Îl pornești tu manual din butonul de GitHub Actions
 
 jobs:
+  vault-login:
+    uses: ./.github/workflows/vault-login.yaml
+
   test-vault:
+    needs: vault-login
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Run Global Vault Action
-        # POINTA CĂTRE BRANCH: în loc de @main, pune numele branch-ului tău de devops
-        uses: ./actions/vault-login/actions.yml
-        with:
-          app_name: 'backend-service'
-          environment: 'local' # Sau staging, pentru a testa logica de non-prod
-          vault_token: ${{ secrets.VAULT_TOKEN_DEV }}
-
       - name: Verify Secrets (Safe Check)
         run: |
-          if [ -z "$DRCARMEN_UNLEASH_AUTHORIZATION" ]; then
+          if [ -z "${{ needs.vault-login.outputs.auth }}" ]; then
             echo "❌ Secretul nu a fost preluat!"
             exit 1
           else

@@ -2,26 +2,24 @@
 name: Test Vault Generic Login
 on:
   workflow_dispatch: # Îl pornești tu manual din butonul de GitHub Actions
+  workflow_call: # Poate fi apelat de alte workflow-uri
 
 jobs:
   test-vault:
     runs-on: ubuntu-latest
+    outputs:
+      auth: ${{ steps.set-outputs.outputs.auth }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Run Global Vault Action
         # POINTA CĂTRE BRANCH: în loc de @main, pune numele branch-ului tău de devops
-        uses: voltronet/actions/vault-login@main
+        uses: ./actions/vault-login
         with:
           app_name: 'backend-service'
           environment: 'local' # Sau staging, pentru a testa logica de non-prod
           vault_token: ${{ secrets.VAULT_TOKEN_DEV }}
 
-      - name: Verify Secrets (Safe Check)
-        run: |
-          if [ -z "$DRCARMEN_UNLEASH_AUTHORIZATION" ]; then
-            echo "❌ Secretul nu a fost preluat!"
-            exit 1
-          else
-            echo "✅ Succes! Variabilele sunt în pipeline."
-          fi
+      - name: Set outputs
+        id: set-outputs
+        run: echo "auth=$DRCARMEN_UNLEASH_AUTHORIZATION" >> $GITHUB_OUTPUT
