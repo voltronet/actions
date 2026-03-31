@@ -13,7 +13,7 @@ jobs:
 
       - name: Run Global Vault Action
         # POINTA CĂTRE BRANCH: în loc de @main, pune numele branch-ului tău de devops
-        uses: ./actions/vault-login/@main
+        uses: ./actions/vault-login/actions.yml
         with:
           app_name: 'backend-service'
           environment: 'local' # Sau staging, pentru a testa logica de non-prod
